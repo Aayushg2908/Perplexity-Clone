@@ -1,0 +1,29 @@
+{
+  "name": "perplexity-clone",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node --env-file=.env dist/app.js",
+    "build": "tsc",
+    "dev": "nodemon --env-file=.env src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.3",
+    "compute-cosine-similarity": "^1.1.0",
+    "compute-dot": "^1.1.0",
+    "cors": "^2.8.5",
+    "events": "^3.3.0",
+    "express": "^4.19.2",
+    "langchain": "^0.2.12",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.2",
+    "ts-node": "^10.9.2"
+  }
+}
