@@ -16,16 +16,16 @@ interface Message {
 
 export const handleMessage = (message: string, ws: WebSocket) => {
   try {
-    const paresedMessage = JSON.parse(message) as Message;
+    const parsedMessage = JSON.parse(message) as Message;
     const id = Math.random().toString(36).substring(7);
 
-    if (!paresedMessage.content) {
+    if (!parsedMessage.content) {
       return ws.send(
         JSON.stringify({ type: "error", data: "Invalid message format" })
       );
     }
 
-    const history: BaseMessage[] = paresedMessage.history.map((msg) => {
+    const history: BaseMessage[] = parsedMessage.history.map((msg) => {
       if (msg[0] === "human") {
         return new HumanMessage({
           content: msg[1],
@@ -37,10 +37,10 @@ export const handleMessage = (message: string, ws: WebSocket) => {
       }
     });
 
-    if (paresedMessage.type === "message") {
-      switch (paresedMessage.focus) {
+    if (parsedMessage.type === "message") {
+      switch (parsedMessage.focus) {
         case "webSearch": {
-          const emitter = handleWebSearch(paresedMessage.content, history);
+          const emitter = handleWebSearch(parsedMessage.content, history);
           emitter.on("data", (data) => {
             const parsedData = JSON.parse(data);
             if (parsedData.type === "response") {
@@ -71,7 +71,7 @@ export const handleMessage = (message: string, ws: WebSocket) => {
           break;
         }
         case "academicSearch": {
-          const emitter = handleAcademicSearch(paresedMessage.content, history);
+          const emitter = handleAcademicSearch(parsedMessage.content, history);
           emitter.on("data", (data) => {
             const parsedData = JSON.parse(data);
             if (parsedData.type === "response") {
@@ -103,7 +103,7 @@ export const handleMessage = (message: string, ws: WebSocket) => {
         }
         case "writingAssistant": {
           const emitter = handleWritingAssistant(
-            paresedMessage.content,
+            parsedMessage.content,
             history
           );
           emitter.on("data", (data) => {
@@ -136,7 +136,7 @@ export const handleMessage = (message: string, ws: WebSocket) => {
           break;
         }
         case "youtubeSearch": {
-          const emitter = handleYoutubeSearch(paresedMessage.content, history);
+          const emitter = handleYoutubeSearch(parsedMessage.content, history);
           emitter.on("data", (data) => {
             const parsedData = JSON.parse(data);
             if (parsedData.type === "response") {
@@ -167,7 +167,7 @@ export const handleMessage = (message: string, ws: WebSocket) => {
           break;
         }
         case "redditSearch": {
-          const emitter = handleRedditSearch(paresedMessage.content, history);
+          const emitter = handleRedditSearch(parsedMessage.content, history);
           emitter.on("data", (data) => {
             const parsedData = JSON.parse(data);
             if (parsedData.type === "response") {
