@@ -37,10 +37,19 @@ const useSocket = (url: string) => {
   return ws;
 };
 
-const ChatWindow = ({ userId }: { userId: string }) => {
+const ChatWindow = ({
+  userId,
+  finalMessages,
+  finalChatHistory,
+}: {
+  userId: string;
+  finalMessages: Message[];
+  finalChatHistory: [string, string][];
+}) => {
   const ws = useSocket(process.env.NEXT_PUBLIC_WS_URL!);
-  const [chatHistory, setChatHistory] = useState<[string, string][]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatHistory, setChatHistory] =
+    useState<[string, string][]>(finalChatHistory);
+  const [messages, setMessages] = useState<Message[]>(finalMessages);
   const [loading, setLoading] = useState(false);
   const [messageAppeared, setMessageAppeared] = useState(false);
   const [focusMode, setFocusMode] = useState("webSearch");
@@ -48,6 +57,8 @@ const ChatWindow = ({ userId }: { userId: string }) => {
   const [conversationId, setConversationId] = useState(
     searchParams.get("conversationId") || ""
   );
+
+  console.log(chatHistory);
 
   const sendMessage = async (message: string) => {
     if (loading) return;

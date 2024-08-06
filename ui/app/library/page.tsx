@@ -8,7 +8,7 @@ const LibraryPage = async () => {
   const session = await auth();
   if (!session?.user?.id) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-3xl">
+      <div className="w-full h-screen flex items-center justify-center text-3xl">
         You need to be logged in to view this page.
       </div>
     );
