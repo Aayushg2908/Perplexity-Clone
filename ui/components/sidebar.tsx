@@ -19,6 +19,12 @@ import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const Sidebar = ({ children }: { children: React.ReactNode }) => {
   const { data } = useSession();
@@ -32,16 +38,16 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
       label: "Home",
     },
     {
+      icon: BookOpenText,
+      href: "/library",
+      active: pathname.includes("library"),
+      label: "Library",
+    },
+    {
       icon: Search,
       href: "/",
       active: pathname.includes("discover"),
       label: "Discover",
-    },
-    {
-      icon: BookOpenText,
-      href: "/",
-      active: pathname.includes("library"),
-      label: "Library",
     },
   ];
 
@@ -58,19 +64,25 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
           </Link>
           <div className="flex flex-col items-center gap-y-3 w-full">
             {navLinks.map((link, i) => (
-              <Link
-                key={i}
-                href={link.href}
-                className={cn(
-                  "relative flex flex-row items-center justify-center cursor-pointer hover:bg-white/10 hover:text-white duration-150 transition w-full py-2 rounded-lg",
-                  link.active ? "text-white" : "text-white/60"
-                )}
-              >
-                <link.icon />
-                {link.active && (
-                  <div className="absolute right-0 -mr-2 h-full w-1 rounded-l-lg bg-white" />
-                )}
-              </Link>
+              <TooltipProvider key={i}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "relative flex flex-row items-center justify-center cursor-pointer hover:bg-white/10 hover:text-white duration-150 transition w-full py-2 rounded-lg",
+                        link.active ? "text-white" : "text-white/60"
+                      )}
+                    >
+                      <link.icon />
+                      {link.active && (
+                        <div className="absolute right-0 -mr-2 h-full w-1 rounded-l-lg bg-white" />
+                      )}
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{link.label}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
           </div>
           <div className="flex flex-col gap-y-6 items-center">

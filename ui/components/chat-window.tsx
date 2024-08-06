@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import EmptyChat from "./empty-chat";
 import Chat from "./chat";
 import Navbar from "./navbar";
+import { createConversation, createMessage } from "@/actions";
+import { useSearchParams } from "next/navigation";
 
 export interface Message {
   id: string;
@@ -35,13 +37,17 @@ const useSocket = (url: string) => {
   return ws;
 };
 
-const ChatWindow = () => {
+const ChatWindow = ({ userId }: { userId: string }) => {
   const ws = useSocket(process.env.NEXT_PUBLIC_WS_URL!);
   const [chatHistory, setChatHistory] = useState<[string, string][]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [messageAppeared, setMessageAppeared] = useState(false);
   const [focusMode, setFocusMode] = useState("webSearch");
+  const searchParams = useSearchParams();
+  const [conversationId, setConversationId] = useState(
+    searchParams.get("conversationId") || ""
+  );
 
   const sendMessage = async (message: string) => {
     if (loading) return;
@@ -52,6 +58,7 @@ const ChatWindow = () => {
     let sources: Document[] | undefined = undefined;
     let receivedMessage = "";
     let added = false;
+    let convId = conversationId;
 
     ws?.send(
       JSON.stringify({
@@ -71,6 +78,11 @@ const ChatWindow = () => {
         createdAt: new Date(),
       },
     ]);
+
+    if (userId && !conversationId && messages.length === 0) {
+      convId = await createConversation(message);
+      setConversationId(convId);
+    }
 
     const messageHandler = async (e: MessageEvent) => {
       const data = JSON.parse(e.data);
@@ -126,6 +138,14 @@ const ChatWindow = () => {
           ["assistant", receivedMessage],
         ]);
         ws?.removeEventListener("message", messageHandler);
+        if (userId) {
+          await createMessage({
+            userMessage: message,
+            assistantMessage: receivedMessage,
+            conversationId: convId,
+            sources: sources || [],
+          });
+        }
         setLoading(false);
       }
     };

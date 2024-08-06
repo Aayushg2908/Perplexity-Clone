@@ -1,5 +1,8 @@
+import { auth } from "@/auth";
 import ChatWindow from "@/components/chat-window";
 
-export default function Home() {
-  return <ChatWindow />;
+export default async function Home() {
+  const session = await auth();
+
+  return <ChatWindow userId={session?.user?.id!} />;
 }
