@@ -80,8 +80,12 @@ const ChatWindow = ({ userId }: { userId: string }) => {
     ]);
 
     if (userId && !conversationId && messages.length === 0) {
-      convId = await createConversation(message);
-      setConversationId(convId);
+      try {
+        convId = await createConversation(message);
+        setConversationId(convId);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const messageHandler = async (e: MessageEvent) => {
@@ -139,12 +143,16 @@ const ChatWindow = ({ userId }: { userId: string }) => {
         ]);
         ws?.removeEventListener("message", messageHandler);
         if (userId) {
-          await createMessage({
-            userMessage: message,
-            assistantMessage: receivedMessage,
-            conversationId: convId,
-            sources: sources || [],
-          });
+          try {
+            await createMessage({
+              userMessage: message,
+              assistantMessage: receivedMessage,
+              conversationId: convId,
+              sources: sources || [],
+            });
+          } catch (error) {
+            console.log(error);
+          }
         }
         setLoading(false);
       }

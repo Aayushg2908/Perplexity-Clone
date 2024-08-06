@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { Document } from "@langchain/core/documents";
+import { revalidatePath } from "next/cache";
 
 export const createConversation = async (title: string) => {
   const session = await auth();
@@ -20,6 +21,8 @@ export const createConversation = async (title: string) => {
       id: true,
     },
   });
+
+  revalidatePath("/library");
 
   return conversation.id;
 };
@@ -59,4 +62,20 @@ export const createMessage = async ({
       sources: JSON.stringify(sources),
     },
   });
+};
+
+export const deleteConversation = async (id: string) => {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return redirect("/");
+  }
+
+  await db.conversation.delete({
+    where: {
+      id,
+      userId: session.user.id,
+    },
+  });
+
+  return revalidatePath("/library");
 };
