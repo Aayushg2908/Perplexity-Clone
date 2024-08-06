@@ -14,6 +14,7 @@ A Perplexity clone where users does not have to go through every search result t
 8. [TailwindCSS](https://tailwindcss.com/)
 9. [NextAuth](https://authjs.dev/)
 10. [Prisma](https://www.prisma.io/)
+11. [Neon](https://neon.tech/)
 
 ## How to setup locally:-
 
@@ -24,7 +25,10 @@ A Perplexity clone where users does not have to go through every search result t
 ```
 docker-compose up
 cd ui
+npm install
 npm run dev
 ```
+
+Note:- If you get timeout error in the logs of docker compose, stop and rerun the docker command
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
