@@ -1,7 +1,7 @@
 "use client";
 
 import { Document } from "@langchain/core/documents";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EmptyChat from "./empty-chat";
 import Chat from "./chat";
 import Navbar from "./navbar";
@@ -57,8 +57,11 @@ const ChatWindow = ({
   const [conversationId, setConversationId] = useState(
     searchParams.get("conversationId") || ""
   );
+  const messageRef = useRef<Message[]>([]);
 
-  console.log(chatHistory);
+  useEffect(() => {
+    messageRef.current = messages;
+  }, [messages]);
 
   const sendMessage = async (message: string) => {
     if (loading) return;
@@ -166,6 +169,37 @@ const ChatWindow = ({
           }
         }
         setLoading(false);
+
+        const lastMessage = messageRef.current[messageRef.current.length - 1];
+        if (
+          lastMessage.role === "assistant" &&
+          lastMessage.sources &&
+          lastMessage.sources.length > 0 &&
+          !lastMessage.suggestions
+        ) {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/suggestions`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                chat_history: chatHistory,
+              }),
+            }
+          );
+          const data = (await response.json()) as { suggestions: string[] };
+          const suggestions = data.suggestions;
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.id === lastMessage.id) {
+                return { ...msg, suggestions: suggestions };
+              }
+              return msg;
+            })
+          );
+        }
       }
     };
 

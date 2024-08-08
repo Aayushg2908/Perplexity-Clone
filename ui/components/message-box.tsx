@@ -1,7 +1,7 @@
 import { MutableRefObject, useEffect, useState } from "react";
 import { Message } from "./chat-window";
 import { cn } from "@/lib/utils";
-import { BookCopy, Disc3, Share } from "lucide-react";
+import { BookCopy, Disc3, Layers3, Plus, Share } from "lucide-react";
 import MessageSources from "./message-sources";
 import Markdown from "markdown-to-jsx";
 import Rewrite from "./rewrite";
@@ -104,6 +104,40 @@ const MessageBox = ({
                   </div>
                 </div>
               )}
+              {isLast &&
+                message.suggestions &&
+                message.suggestions.length > 0 &&
+                message.role === "assistant" &&
+                !loading && (
+                  <>
+                    <div className="h-px w-full bg-[#1C1C1C]" />
+                    <div className="flex flex-col space-y-3 text-white">
+                      <div className="flex flex-row items-center space-x-2 mt-4">
+                        <Layers3 />
+                        <h3 className="text-xl font-medium">Related</h3>
+                      </div>
+                      <div className="flex flex-col space-y-3">
+                        {message.suggestions.map((suggestion, i) => (
+                          <div
+                            key={i}
+                            className="flex flex-col space-y-3 text-sm"
+                          >
+                            <div className="h-px w-full bg-[#1C1C1C]" />
+                            <div
+                              onClick={() => sendMessage(suggestion)}
+                              className="cursor-pointer flex flex-row justify-between font-medium space-x-2 items-center"
+                            >
+                              <p className="hover:text-[#24A0ED] transition duration-200">
+                                {suggestion}
+                              </p>
+                              <Plus size={20} className="text-[#24A0ED]" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
             </div>
           </div>
           <div className="lg:sticky lg:top-20 flex flex-col items-center space-y-3 w-full lg:w-3/12 z-30 h-full pb-4">
