@@ -24,9 +24,6 @@ A Perplexity clone where users does not have to go through every search result t
 
 ```
 docker-compose up
-cd ui
-npm install
-npm run dev
 ```
 
 Note:- If you get timeout error in the logs of docker compose, stop and rerun the docker command

@@ -25,5 +25,18 @@ services:
     networks:
       - perplexity
 
+  perplexity-frontend:
+    build:
+      context: .
+      dockerfile: frontend.dockerfile
+    depends_on:
+      - perplexity-backend
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    networks:
+      - perplexity
+
 networks:
   perplexity:
